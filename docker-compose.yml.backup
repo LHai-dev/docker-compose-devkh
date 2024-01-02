@@ -1,0 +1,300 @@
+version: '3.8'
+services:
+  api-geteway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: devkh-api_gateway-service
+    ports:
+      - "9090:9090"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+      - identity-service
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: futter
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    container_name: devkh-config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - devkh_net
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: devkh-eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - devkh_net
+
+  catalog-service:
+    build:
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: devkh-catalog-service
+    ports:
+      - "8085:8085"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  content-creator-service:
+    build:
+      context: ./content-creator-service
+      dockerfile: Dockerfile
+    container_name: devkh-content-creator-service
+    ports:
+      - "8087:8087"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  course-service:
+    build:
+      context: ./course-service
+      dockerfile: Dockerfile
+    container_name: devkh-course-service
+    ports:
+      - "8086:8086"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+      SPRING_BOOTSTRAP-SERVERS: http://broker:9092/
+
+  forum-service:
+    build:
+      context: ./forum-service
+      dockerfile: Dockerfile
+    container_name: devkh-forum-service
+    ports:
+      - "8096:8096"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  learning-service:
+    build:
+      context: ./learning-service
+      dockerfile: Dockerfile
+    container_name: devkh-learning-service
+    ports:
+      - "8089:8089"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  identity-service:
+    build:
+      context: ./identity-service
+      dockerfile: Dockerfile
+    container_name: devkh-identity-service
+    ports:
+      - "9000:9000"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  rate-review-service:
+    build:
+      context: ./rate-review-service
+      dockerfile: Dockerfile
+    container_name: devkh-rate-review-service
+    ports:
+      - "8088:8088"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  media-service:
+    build:
+      context: ./media-service
+      dockerfile: Dockerfile
+    container_name: devkh-media-service
+    volumes:
+      - /usr/bin/ffmpeg:/usr/bin/ffmpeg
+      - /usr/bin/ffplay:/usr/bin/ffplay
+      - /usr/bin/ffprobe:/usr/bin/ffprobe
+    ports:
+      - "8095:8095"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+
+  instructor-service:
+    build:
+      context: ./instructor-service
+      dockerfile: Dockerfile
+    container_name: devkh-instructor-service
+    ports:
+      - "8081:8081"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+
+  student-service:
+    build:
+      context: ./student-service
+      dockerfile: Dockerfile
+    container_name: devkh-student-service
+    ports:
+      - "8082:8082"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+
+  reward-service:
+    build:
+      context: ./reward-service
+      dockerfile: Dockerfile
+    container_name: devkh-reward-service
+    ports:
+      - "8091:8091"
+    networks:
+      - devkh_net
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 20s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SPRING_CONFIG_IMPORT: configserver:http://devkh-config-server:8888/
+#  minio:
+#    image: minio/minio
+#    container_name: minio
+#    environment:
+#      MINIO_ACCESS_KEY: admin123
+#      MINIO_SECRET_KEY: admin123
+#    volumes:
+#      - /home/sinaro-api/final_project/data:/data
+#    ports:
+#      - "9001:9001"
+#    command: quay.io/minio/minio server /data --console-address":9091"
+#    networks:
+#      - devkh_net
+networks:
+  devkh_net:
+    name: devkh_net
+    external: true
+
+
